@@ -1,90 +1,144 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dia 07</title>
+    <title>Calculadora com Histórico</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculadora {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .visor {
+            background-color: #222;
+            color: #fff;
+            font-size: 2em;
+            text-align: right;
+            padding: 20px;
+        }
+
+        .botoes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .botoes button {
+            padding: 20px;
+            font-size: 1.2em;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .botoes button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .historico {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f1f1f1;
+            font-size: 0.9em;
+            border-top: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
+    <div class="calculadora">
+        <div id="visor" class="visor">0</div>
+        <div class="botoes">
+            <button onclick="limparVisor()">C</button>
+            <button onclick="apagarUltimo()">←</button>
+            <button onclick="adicionarOperador('/')">÷</button>
+            <button onclick="adicionarOperador('*')">×</button>
+            <button onclick="adicionarNumero('7')">7</button>
+            <button onclick="adicionarNumero('8')">8</button>
+            <button onclick="adicionarNumero('9')">9</button>
+            <button onclick="adicionarOperador('-')">-</button>
+            <button onclick="adicionarNumero('4')">4</button>
+            <button onclick="adicionarNumero('5')">5</button>
+            <button onclick="adicionarNumero('6')">6</button>
+            <button onclick="adicionarOperador('+')">+</button>
+            <button onclick="adicionarNumero('1')">1</button>
+            <button onclick="adicionarNumero('2')">2</button>
+            <button onclick="adicionarNumero('3')">3</button>
+            <button onclick="calcularResultado()">=</button>
+            <button onclick="adicionarNumero('0')">0</button>
+            <button onclick="adicionarPonto()">.</button>
+        </div>
+        <div id="historico" class="historico"></div>
+    </div>
     <script>
-        const readline = require('readline');
+        let visor = document.getElementById('visor');
+        let historico = document.getElementById('historico');
+        let operacaoAtual = '';
+        let resultado = null;
+        let novoNumero = false;
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-function soma(a, b) {
-    return a + b;
-}
-
-function subtracao(a, b) {
-    return a - b;
-}
-
-function multiplicacao(a, b) {
-    return a * b;
-}
-
-function divisao(a, b) {
-    if (b === 0) {
-        return "Erro: divisão por zero não é permitida.";
-    }
-    return a / b;
-}
-
-function solicitarOperacao() {
-    console.log("\nEscolha uma operação:");
-    console.log("1 - Soma");
-    console.log("2 - Subtração");
-    console.log("3 - Multiplicação");
-    console.log("4 - Divisão");
-    console.log("5 - Sair");
-    rl.question("Digite o número da operação desejada: ", (opcao) => {
-        if (opcao === '5') {
-            console.log("Programa encerrado. Obrigado por usar a calculadora!");
-            rl.close();
-        } else if (['1', '2', '3', '4'].includes(opcao)) {
-            solicitarNumeros(opcao);
-        } else {
-            console.log("Opção inválida! Tente novamente.");
-            solicitarOperacao();
-        }
-    });
-}
-
-function solicitarNumeros(opcao) {
-    rl.question("Digite o primeiro valor: ", (input1) => {
-        const num1 = parseFloat(input1);
-
-        rl.question("Digite o segundo valor: ", (input2) => {
-            const num2 = parseFloat(input2);
-            let resultado;
-
-            switch (opcao) {
-                case '1':
-                    resultado = soma(num1, num2);
-                    console.log(Resultado da soma: ${resultado});
-                    break;
-                case '2':
-                    resultado = subtracao(num1, num2);
-                    console.log(Resultado da subtração: ${resultado});
-                    break;
-                case '3':
-                    resultado = multiplicacao(num1, num2);
-                    console.log(Resultado da multiplicação: ${resultado});
-                    break;
-                case '4':
-                    resultado = divisao(num1, num2);
-                    console.log(Resultado da divisão: ${resultado});
-                    break;
+        function adicionarNumero(numero) {
+            if (novoNumero) {
+                visor.textContent = numero;
+                novoNumero = false;
+            } else {
+                visor.textContent = visor.textContent === '0' ? numero : visor.textContent + numero;
             }
-            solicitarOperacao();
-        });
-    });
-}
+            operacaoAtual += numero;
+        }
 
-solicitarOperacao();
+        function adicionarOperador(operador) {
+            if (novoNumero) {
+                operacaoAtual = resultado + operador;
+                novoNumero = false;
+            } else {
+                operacaoAtual += operador;
+            }
+            visor.textContent += operador;
+        }
+
+        function adicionarPonto() {
+            if (!visor.textContent.includes('.')) {
+                visor.textContent += '.';
+                operacaoAtual += '.';
+            }
+        }
+
+        function limparVisor() {
+            visor.textContent = '0';
+            operacaoAtual = '';
+            resultado = null;
+        }
+
+        function apagarUltimo() {
+            visor.textContent = visor.textContent.slice(0, -1) || '0';
+            operacaoAtual = operacaoAtual.slice(0, -1);
+        }
+
+        function calcularResultado() {
+            try {
+                resultado = eval(operacaoAtual.replace('×', '*').replace('÷', '/'));
+                visor.textContent = resultado;
+                historico.innerHTML += <div>${operacaoAtual} = ${resultado}</div>;  // Correção aqui
+                operacaoAtual = resultado.toString();
+                novoNumero = true;
+            } catch {
+                visor.textContent = 'Erro';
+                operacaoAtual = '';
+            }
+        }
     </script>
 </body>
 </html>
