@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dia 06</title>
+</head>
+<body>
+    <script>
+        // Importa o pacote readline-sync para entrada do usuário
+const readline = require('readline-sync');
+
+// Inicialização das categorias com listas vazias
+const listaDeCompras = {
+    Frutas: [],
+    Laticínios: [],
+    Congelados: [],
+    Doces: [],
+    Outros: []
+};
+
+// Função para exibir a lista final
+function exibirListaDeCompras() {
+    console.log("\nLista de compras:");
+    for (let categoria in listaDeCompras) {
+        if (listaDeCompras[categoria].length > 0) {
+            console.log(`  ${categoria}: ${listaDeCompras[categoria].join(", ")}`);
+        } else {
+            console.log(`  ${categoria}:`);
+        }
+    }
+}
+
+// Função para remover um item da lista
+function removerItem() {
+    exibirListaDeCompras();
+    const itemARemover = readline.question("Digite o nome do item que deseja remover: ");
+    
+    let encontrado = false;
+    for (let categoria in listaDeCompras) {
+        const index = listaDeCompras[categoria].indexOf(itemARemover);
+        if (index !== -1) {
+            listaDeCompras[categoria].splice(index, 1);
+            console.log(`"${itemARemover}" foi removido da categoria "${categoria}".`);
+            encontrado = true;
+            break;
+        }
+    }
+    if (!encontrado) {
+        console.log("Não foi possível encontrar o item dentro da lista!");
+    }
+}
+
+// Loop para adicionar itens à lista ou remover itens
+while (true) {
+    // Pergunta inicial para adicionar, remover ou sair
+    let desejaAdicionar = readline.question("Você deseja adicionar ou remover uma comida na sua lista de compras? (adicionar/remover/não): ").toLowerCase();
+
+    if (desejaAdicionar === "não" || desejaAdicionar === "nao") {
+        // Exibe a lista final e termina o programa
+        exibirListaDeCompras();
+        console.log("Programa encerrado.");
+        break;
+    } else if (desejaAdicionar === "adicionar") {
+        // Adicionar item
+        let comida = readline.question("Qual comida você deseja adicionar? ");
+        if (!comida) {
+            console.log("O nome da comida não pode estar vazio. Tente novamente.");
+            continue;
+        }
+
+        let categoria = readline.question("Em qual categoria essa comida se encaixa? (Frutas, Laticínios, Congelados, Doces, Outros): ").toLowerCase();
+
+        // Mapeia a categoria inserida para a chave do objeto (com case insensitive)
+        switch (categoria) {
+            case "frutas":
+                listaDeCompras.Frutas.push(comida);
+                break;
+            case "laticínios":
+            case "laticinios":
+                listaDeCompras.Laticínios.push(comida);
+                break;
+            case "congelados":
+                listaDeCompras.Congelados.push(comida);
+                break;
+            case "doces":
+                listaDeCompras.Doces.push(comida);
+                break;
+            case "outros":
+                listaDeCompras.Outros.push(comida);
+                break;
+            default:
+                console.log("Categoria não reconhecida. Adicionando em 'Outros'.");
+                listaDeCompras.Outros.push(comida);
+                break;
+        }
+    } else if (desejaAdicionar === "remover") {
+        // Remover item, apenas se houver itens na lista
+        const itensNaLista = Object.values(listaDeCompras).some(categoria => categoria.length > 0);
+        if (itensNaLista) {
+            removerItem();
+        } else {
+            console.log("A lista está vazia. Não há itens para remover.");
+        }
+    } else {
+        console.log("Resposta inválida. Por favor, responda com 'adicionar', 'remover' ou 'não'.");
+    }
+}
+    </script>
+</body>
+</html>
