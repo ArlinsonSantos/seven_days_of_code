@@ -1,11 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dia 04</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Dia 4 </title>
+  <style>
+    body {
+      background-color: #ffffff;
+      text-align: center;
+      margin: 20px;
+    }
+    .resultado {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+    }
+    input {
+      padding: 8px;
+      margin: 10px;
+    }
+    a{
+      text-decoration: none;
+      color: black;
+      background-color: #ffffff;
+      border: solid 2px #ffffff;
+      border-radius: 5px;
+      padding: 2px 4px;
+    }
+    #voltar{
+      margin-top: 20px;
+      background-color: #ffffff;
+      border: solid 2px #e0d8d8;
+      padding: 4px 4px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
 </head>
 <body>
-    
+
+  <p>O computador pensou em um número entre 0 e 10. Tente adivinhar!</p>
+  <p>Você tem 3 chances!</p>
+  <input type="number" id="chute" placeholder="Digite seu chute" min="0" max="10" />
+  <br />
+  <button onclick="verificar()">Chutar</button>
+  <div class="resultado" id="resultado"></div>
+  <div id="voltar"><a href="index.html">Voltar</a></div>
+  <script>
+    const numeroCorreto = Math.floor(Math.random() * 11);
+    let tentativasRestantes = 3;
+    function verificar() {
+      const chute = parseInt(document.getElementById("chute").value);
+      const resultadoDiv = document.getElementById("resultado");
+      if (isNaN(chute) || chute < 0 || chute > 10) {
+        resultadoDiv.innerHTML = "Por favor, insira um número válido entre 0 e 10.";
+        return;
+      }
+      if (chute === numeroCorreto) {
+        resultadoDiv.innerHTML = `Parabéns! Você acertou! O número era ${numeroCorreto}`;
+        document.getElementById("chute").disabled = true;
+        return;
+      }
+      tentativasRestantes--;
+      if (tentativasRestantes > 0) {
+        resultadoDiv.innerHTML = `Errado! Você ainda tem ${tentativasRestantes} tentativa(s).`;
+      } else {
+        resultadoDiv.innerHTML = `Você perdeu! O número correto era ${numeroCorreto}`;
+        document.getElementById("chute").disabled = true;
+      }
+    }
+  </script>
 </body>
 </html>
