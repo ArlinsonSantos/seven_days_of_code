@@ -6,106 +6,82 @@
     <title>Dia 06</title>
 </head>
 <body>
+
     <script>
-        // Importa o pacote readline-sync para entrada do usuário
-const readline = require('readline-sync');
+    let frutas = [];
+    let laticinios = [];
+    let doces = [];
+    let congelados = [];
+    let comida = "";
+    let categoria = "";
+    let remover = "";
 
-// Inicialização das categorias com listas vazias
-const listaDeCompras = {
-    Frutas: [],
-    Laticínios: [],
-    Congelados: [],
-    Doces: [],
-    Outros: []
-};
-
-// Função para exibir a lista final
-function exibirListaDeCompras() {
-    console.log("\nLista de compras:");
-    for (let categoria in listaDeCompras) {
-        if (listaDeCompras[categoria].length > 0) {
-            console.log(`  ${categoria}: ${listaDeCompras[categoria].join(", ")}`);
+    let adicionarMais = "sim";  // valor inicial como "sim", porque a primeira vez sempre vai entrar no while
+    while(adicionarMais !== "não"){
+        // Ajustar a mensagem para não incluir "remover" se não houver elementos
+        if(frutas.length === 0 && laticinios.length === 0 && doces.length === 0 && congelados.length === 0){
+            adicionarMais = prompt("Você deseja adicionar uma comida na lista de compras? Responda 'sim' ou 'não'.");
         } else {
-            console.log(`  ${categoria}:`);
+            adicionarMais = prompt("Você deseja adicionar uma comida na lista de compras? Responda 'sim', 'não' ou 'remover'.");
         }
-    }
-}
 
-// Função para remover um item da lista
-function removerItem() {
-    exibirListaDeCompras();
-    const itemARemover = readline.question("Digite o nome do item que deseja remover: ");
-    
-    let encontrado = false;
-    for (let categoria in listaDeCompras) {
-        const index = listaDeCompras[categoria].indexOf(itemARemover);
-        if (index !== -1) {
-            listaDeCompras[categoria].splice(index, 1);
-            console.log(`"${itemARemover}" foi removido da categoria "${categoria}".`);
-            encontrado = true;
+        while (adicionarMais !== "sim" && adicionarMais !== "não" && adicionarMais !== "remover") {
+            alert("Operação não reconhecida!");
+            adicionarMais = prompt("Você deseja adicionar uma comida na lista de compras? Responda 'sim', 'não' ou 'remover'.");
+        }
+
+        if (adicionarMais === "não") {
             break;
         }
-    }
-    if (!encontrado) {
-        console.log("Não foi possível encontrar o item dentro da lista!");
-    }
-}
 
-// Loop para adicionar itens à lista ou remover itens
-while (true) {
-    // Pergunta inicial para adicionar, remover ou sair
-    let desejaAdicionar = readline.question("Você deseja adicionar ou remover uma comida na sua lista de compras? (adicionar/remover/não): ").toLowerCase();
+        if(adicionarMais === "sim"){
+            comida = prompt("Qual comida você deseja inserir?");
+            categoria = prompt("Em qual categoria essa comida se encaixa: 'frutas', 'laticínios', 'doces' ou 'congelados'?");
 
-    if (desejaAdicionar === "não" || desejaAdicionar === "nao") {
-        // Exibe a lista final e termina o programa
-        exibirListaDeCompras();
-        console.log("Programa encerrado.");
-        break;
-    } else if (desejaAdicionar === "adicionar") {
-        // Adicionar item
-        let comida = readline.question("Qual comida você deseja adicionar? ");
-        if (!comida) {
-            console.log("O nome da comida não pode estar vazio. Tente novamente.");
-            continue;
+            // Adicionar comida nas categorias específicas
+            if(categoria === 'frutas'){
+                frutas.push(comida);
+            } else if (categoria === 'laticínios'){
+                laticinios.push(comida);
+            } else if (categoria === 'doces'){
+                doces.push(comida);
+            } else if (categoria === 'congelados'){
+                congelados.push(comida);
+            } else {
+                alert("Essa categoria não foi pré-definida.");
+            }
+        } else if(adicionarMais === "remover"){
+            if(frutas.length === 0 && laticinios.length === 0 && doces.length === 0 && congelados.length === 0){ 
+                alert("A lista está vazia!");
+            } else {
+                // Exibir as listas com as opções para o usuário
+                remover = prompt(`Lista de compras:\n  Frutas: ${frutas}\n  Laticínios: ${laticinios}\n  Doces: ${doces}\n  Congelados: ${congelados}\n\nQual produto você deseja remover?`);
+
+                // Função para remover o item de qualquer categoria
+                const categorias = [frutas, laticinios, doces, congelados];
+                const categoriasNome = ['Frutas', 'Laticínios', 'Doces', 'Congelados'];
+
+                let encontrado = false;
+                for (let i = 0; i < categorias.length; i++) {
+                    if(categorias[i].indexOf(remover) !== -1) {
+                        categorias[i].splice(categorias[i].indexOf(remover), 1);
+                        alert(`O item ${remover} foi removido com sucesso!`);
+                        encontrado = true;
+                        break;
+                    }
+                }
+
+                if (!encontrado) {
+                    alert("Não foi possível encontrar o item dentro da lista!");
+                }
+            }
         }
-
-        let categoria = readline.question("Em qual categoria essa comida se encaixa? (Frutas, Laticínios, Congelados, Doces, Outros): ").toLowerCase();
-
-        // Mapeia a categoria inserida para a chave do objeto (com case insensitive)
-        switch (categoria) {
-            case "frutas":
-                listaDeCompras.Frutas.push(comida);
-                break;
-            case "laticínios":
-            case "laticinios":
-                listaDeCompras.Laticínios.push(comida);
-                break;
-            case "congelados":
-                listaDeCompras.Congelados.push(comida);
-                break;
-            case "doces":
-                listaDeCompras.Doces.push(comida);
-                break;
-            case "outros":
-                listaDeCompras.Outros.push(comida);
-                break;
-            default:
-                console.log("Categoria não reconhecida. Adicionando em 'Outros'.");
-                listaDeCompras.Outros.push(comida);
-                break;
-        }
-    } else if (desejaAdicionar === "remover") {
-        // Remover item, apenas se houver itens na lista
-        const itensNaLista = Object.values(listaDeCompras).some(categoria => categoria.length > 0);
-        if (itensNaLista) {
-            removerItem();
-        } else {
-            console.log("A lista está vazia. Não há itens para remover.");
-        }
-    } else {
-        console.log("Resposta inválida. Por favor, responda com 'adicionar', 'remover' ou 'não'.");
     }
-}
+
+    // Exibir a lista final de compras
+    alert(`Lista de compras:\n  Frutas: ${frutas}\n  Laticínios: ${laticinios}\n  Doces: ${doces}\n  Congelados: ${congelados}`);
+
     </script>
+
 </body>
 </html>
